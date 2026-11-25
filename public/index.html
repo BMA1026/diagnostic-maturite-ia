@@ -100,8 +100,19 @@ footer{background:var(--dark);color:#9a9a9a;text-align:center;padding:26px 0 36p
 footer .fm{font-family:var(--serif);text-transform:uppercase;color:#fff;font-size:13px;letter-spacing:.22em}
 footer .fs{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;margin-top:8px;color:#8a8a8a}
 
+.leadbox{margin-top:22px;background:var(--panel);border:1px solid var(--line);padding:20px}
+.leadbox h4{font-family:var(--sans);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--nav);font-weight:600;margin:0 0 8px}
+.leadp{font-size:13px;color:var(--ink2);margin:0 0 14px}
+.leadrow{display:flex;gap:10px;flex-wrap:wrap}
+.leadrow input{flex:1;min-width:180px;font-family:var(--sans);font-size:14px;color:var(--ink);background:var(--bg);border:1px solid var(--line);padding:10px 12px}
+.leadrow input:focus{outline:2px solid var(--nav);outline-offset:1px;border-color:var(--nav)}
+.leadconsent{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--ink2);margin:12px 0}
+.leadconsent input{margin-top:3px}
+.leadrow2{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.leadmsg{font-size:12.5px;color:var(--ink3)}
+.leadmsg.ok{color:var(--green)} .leadmsg.err{color:var(--bord)}
 @media print{
-  header.bar,#questionnaire,.cta,.note,footer,.theme-btn,.run{display:none!important}
+  header.bar,#questionnaire,.cta,.note,footer,.theme-btn,.run,.leadbox{display:none!important}
   body{background:#fff;color:#000;font-size:12px}
   #result{display:block!important}
   .rhead,.card,.road,.uc,.compliance{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
@@ -151,6 +162,16 @@ footer .fs{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;margin-t
     <div class="road"><h4>Feuille de route</h4><div id="road"></div></div>
     <div><h4 style="font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:22px 0 2px">Cas d'usage recommandés</h4><div class="usecases" id="usecases"></div></div>
     <div class="compliance" id="compliance"></div>
+    <div class="leadbox">
+      <h4>Recevoir ce diagnostic et échanger</h4>
+      <p class="leadp">Laissez votre email pour recevoir ce diagnostic. Si vous le souhaitez, nous pouvons vous recontacter pour un diagnostic approfondi. Cette étape est facultative.</p>
+      <div class="leadrow">
+        <input id="l_email" type="email" placeholder="Votre email" aria-label="Email">
+        <input id="l_org" placeholder="Entreprise (optionnel)" aria-label="Entreprise">
+      </div>
+      <label class="leadconsent"><input type="checkbox" id="l_consent"> J'accepte d'être recontacté au sujet de ce diagnostic. Mes coordonnées ne sont pas revendues, et je peux demander leur suppression à tout moment.</label>
+      <div class="leadrow2"><button class="btn" id="l_send">Envoyer</button><span class="leadmsg" id="l_msg"></span></div>
+    </div>
     <div class="cta">
       <button class="btn" id="dl">Télécharger le rapport (PDF)</button>
       <button class="btn ghost" id="restart">Refaire le diagnostic</button>
@@ -255,7 +276,9 @@ footer .fs{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;margin-t
     svg.innerHTML=g;
   }
 
+  var lead={niveau:"",score:null};
   function render(data){
+    lead.niveau=data.niveau_global.label;lead.score=data.niveau_global.score;
     document.getElementById('lv').textContent=data.niveau_global.label;
     document.getElementById('sc').textContent=data.niveau_global.score+' / 4';
     document.getElementById('synthese').textContent=data.diagnostic.synthese||'';
@@ -288,6 +311,26 @@ footer .fs{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;margin-t
         runmsg.textContent='';render(res.j);
       })
       .catch(function(){runBtn.disabled=false;runmsg.className='runmsg err';runmsg.textContent='Connexion impossible. Réessayez.';});
+  });
+
+  var ls=document.getElementById('l_send');
+  ls.addEventListener('click',function(){
+    var msg=document.getElementById('l_msg');msg.className='leadmsg';
+    var email=document.getElementById('l_email').value.trim();
+    var org=document.getElementById('l_org').value.trim();
+    var consent=document.getElementById('l_consent').checked;
+    if(!consent){msg.className='leadmsg err';msg.textContent='Merci de cocher le consentement.';return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){msg.className='leadmsg err';msg.textContent='Email invalide.';return;}
+    ls.disabled=true;msg.textContent='Envoi en cours…';
+    fetch('/api/lead',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:email,entreprise:org,consent:true,niveau:lead.niveau,score:lead.score})})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+      .then(function(res){
+        ls.disabled=false;
+        if(!res.ok||res.j.error){msg.className='leadmsg err';msg.textContent=res.j.error||'Envoi impossible.';return;}
+        msg.className='leadmsg ok';msg.textContent='Merci, c\'est bien reçu.';
+        document.getElementById('l_email').value='';document.getElementById('l_org').value='';document.getElementById('l_consent').checked=false;
+      })
+      .catch(function(){ls.disabled=false;msg.className='leadmsg err';msg.textContent='Connexion impossible. Réessayez.';});
   });
 
   document.getElementById('dl').addEventListener('click',function(){window.print();});

@@ -52,6 +52,16 @@ npx vercel dev            # http://localhost:3000
 
 Importer le dépôt dans Vercel (framework : Other), ajouter `ANTHROPIC_API_KEY`, déployer. Chaque push sur la branche par défaut redéploie.
 
+## Collecte de leads (optionnelle, consentie)
+
+Après l'affichage du diagnostic, l'utilisateur peut, s'il le souhaite, laisser son email pour recevoir le rapport ou être recontacté. Cette étape est facultative : le diagnostic est toujours visible sans la renseigner.
+
+- Consentement explicite obligatoire (case à cocher) et mention de confidentialité (pas de revente, droit de suppression).
+- Donnée minimale : email, entreprise (optionnel), plus le niveau et le score du diagnostic.
+- `api/lead.js` écrit dans Airtable via son API, le token restant côté serveur.
+
+Pour l'activer, créer dans Airtable une table avec les champs `Date`, `Email`, `Entreprise`, `Niveau`, `Score`, `Consentement`, puis renseigner les variables d'environnement `AIRTABLE_TOKEN`, `AIRTABLE_BASE_ID` et, si la table ne s'appelle pas `Leads`, `AIRTABLE_TABLE`. Sans ces variables, l'endpoint répond que la collecte n'est pas configurée et le reste du diagnostic fonctionne normalement.
+
 ## Adapter à un autre référentiel
 
 La logique est indépendante du contenu : modifier les dimensions, questions et recommandations dans `data/framework.js`, et répercuter les intitulés dans `public/index.html` (les clés `dimension_index` doivent rester identiques des deux côtés).
