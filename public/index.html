@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Diagnostic de maturité IA</title>
+<meta name="description" content="Diagnostic de maturité IA : un questionnaire court, un score calculé et un diagnostic rédigé par un vrai modèle Claude. Construit par Baba Moustapha Amadou.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#ffffff;--surface:#f9f9f9;--panel:#f5f5f5;--dark:#111;--dark-fg:#fff;
+  --ink:#1a1a1a;--ink2:#555;--ink3:#737373;--line:#e0e0e0;--line2:#ececec;
+  --nav:#1C3557;--nav-s:#eaeef4;--green:#1B5E3B;--green-s:#e8f1ec;--bronze:#7B5E3A;--bronze-s:#f1ece3;--bord:#7D1F2A;
+  --shadow:0 1px 2px rgba(17,17,17,.05),0 10px 34px rgba(17,17,17,.07);
+  --serif:"EB Garamond",Georgia,serif;--sans:"Montserrat",system-ui,Arial,sans-serif;--mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --maxw:920px;color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111;--surface:#171717;--panel:#1c1c1c;--dark:#000;--ink:#f3f3f3;--ink2:#b4b4b4;--ink3:#888;--line:#333;--line2:#262626;
+  --nav:#5a82c0;--nav-s:#17202f;--green:#5aa77e;--green-s:#13241c;--bronze:#b89a6a;--bronze-s:#201c12;--bord:#c87682;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 12px 36px rgba(0,0,0,.55);color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#111;--surface:#171717;--panel:#1c1c1c;--dark:#000;--ink:#f3f3f3;--ink2:#b4b4b4;--ink3:#888;--line:#333;--line2:#262626;
+  --nav:#5a82c0;--nav-s:#17202f;--green:#5aa77e;--green-s:#13241c;--bronze:#b89a6a;--bronze-s:#201c12;--bord:#c87682;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 12px 36px rgba(0,0,0,.55);color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 max(20px,env(safe-area-inset-left,0px))}
+header.bar{position:sticky;top:0;z-index:20;background:var(--dark);color:var(--dark-fg);border-bottom:1px solid #262626}
+.bar .in{max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px max(20px,env(safe-area-inset-left,0px))}
+.wm{font-family:var(--serif);text-transform:uppercase;font-size:14px;letter-spacing:.2em}
+.wmsub{font-family:var(--sans);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:#9a9a9a;margin-top:3px}
+.theme-btn{appearance:none;background:transparent;border:1px solid #3a3a3a;color:#cfcfcf;width:30px;height:30px;border-radius:50%;cursor:pointer}
+.hero{padding:42px 0 6px;text-align:center}
+.eyebrow{font-family:var(--sans);font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink3);font-weight:500}
+h1{font-family:var(--serif);font-weight:500;letter-spacing:.04em;font-size:clamp(25px,4.6vw,40px);text-transform:uppercase;margin:12px 0 0;line-height:1.14}
+.lead{max-width:62ch;margin:16px auto 0;color:var(--ink2);font-size:15.5px}
+.fict{display:inline-block;margin:16px auto 0;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--bronze);border:1px solid var(--line);background:var(--bronze-s);padding:5px 11px}
+section{padding:28px 0}
+.dim{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);padding:20px 22px;margin-bottom:16px}
+.dim h3{font-family:var(--serif);font-size:18px;letter-spacing:.03em;text-transform:none;font-weight:600;margin:0 0 4px;color:var(--nav)}
+.dim .dsub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:14px}
+.q{padding:12px 0;border-top:1px solid var(--line2)}
+.q:first-of-type{border-top:none}
+.q .qt{font-size:14px;color:var(--ink);margin-bottom:9px}
+.scale{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.scale .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3)}
+.scale .opts{display:flex;gap:6px}
+.scale button{width:38px;height:38px;font-family:var(--mono);font-size:13px;color:var(--ink2);background:var(--panel);border:1px solid var(--line);cursor:pointer}
+.scale button[aria-pressed="true"]{background:var(--nav);color:#fff;border-color:var(--nav)}
+.q.miss .qt{color:var(--bord)}
+.run{display:flex;flex-direction:column;align-items:center;gap:10px;margin:8px 0 10px}
+.btn{appearance:none;cursor:pointer;font-family:var(--sans);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:12px;padding:14px 28px;border:1px solid var(--nav);background:var(--nav);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:transparent;color:var(--nav)}
+.runmsg{font-size:12.5px;color:var(--ink3);min-height:1.2em}
+.runmsg.err{color:var(--bord)}
+
+/* Résultats */
+#result{display:none}
+.rhead{display:grid;grid-template-columns:1fr;gap:22px;align-items:center;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);padding:24px}
+@media(min-width:720px){.rhead{grid-template-columns:280px 1fr}}
+.radar{width:100%;max-width:280px;margin:0 auto;display:block}
+.radar text{font-family:var(--sans);font-size:9px;fill:var(--ink2)}
+.level .eyebrow{display:block}
+.level .lv{font-family:var(--serif);font-size:clamp(26px,5vw,38px);font-weight:600;color:var(--nav);letter-spacing:.02em;margin-top:6px}
+.level .sc{font-family:var(--mono);font-size:13px;color:var(--ink3);margin-top:4px}
+.level p{margin-top:14px;color:var(--ink);font-size:14.5px}
+.grid2{display:grid;grid-template-columns:1fr;gap:16px;margin-top:18px}
+@media(min-width:720px){.grid2{grid-template-columns:1fr 1fr}}
+.card{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);padding:20px}
+.card h4{font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);font-weight:600;margin:0 0 12px}
+.card ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.card li{position:relative;padding-left:18px;font-size:14px}
+.card li::before{content:"";position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:50%;background:var(--green)}
+.card.gaps li::before{background:var(--bronze)}
+.road{margin-top:18px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);padding:20px}
+.road h4{font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);font-weight:600;margin:0 0 14px}
+.step{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:12px 0;border-top:1px solid var(--line2)}
+.step:first-of-type{border-top:none}
+.step .num{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--nav)}
+.step .ac{font-weight:600;font-size:14.5px}
+.step .wh{font-size:13px;color:var(--ink2);margin-top:3px}
+.step .hz{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);margin-top:5px}
+.usecases{display:grid;grid-template-columns:1fr;gap:12px;margin-top:18px}
+@media(min-width:620px){.usecases{grid-template-columns:repeat(3,1fr)}}
+.uc{border:1px solid var(--line);background:var(--surface);padding:16px}
+.uc .t{font-weight:600;font-size:14px}
+.uc .g{font-size:12.5px;color:var(--ink2);margin-top:6px}
+.compliance{margin-top:18px;background:var(--panel);border:1px solid var(--line);padding:16px 18px;font-size:13.5px;color:var(--ink2)}
+.compliance b{color:var(--ink)}
+.cta{margin-top:20px;text-align:center;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.note{background:var(--panel);border:1px solid var(--line);padding:16px 18px;margin:26px 0 30px;font-size:12.5px;color:var(--ink2)}
+.note b{color:var(--ink)}
+footer{background:var(--dark);color:#9a9a9a;text-align:center;padding:26px 0 36px}
+footer .fm{font-family:var(--serif);text-transform:uppercase;color:#fff;font-size:13px;letter-spacing:.22em}
+footer .fs{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;margin-top:8px;color:#8a8a8a}
+
+@media print{
+  header.bar,#questionnaire,.cta,.note,footer,.theme-btn,.run{display:none!important}
+  body{background:#fff;color:#000;font-size:12px}
+  #result{display:block!important}
+  .rhead,.card,.road,.uc,.compliance{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
+  .printhead{display:block!important;text-align:center;margin-bottom:14px}
+}
+.printhead{display:none}
+.printhead .pt{font-family:var(--serif);text-transform:uppercase;letter-spacing:.1em;font-size:16px}
+.printhead .ps{font-size:11px;color:#444;margin-top:4px}
+</style>
+</head>
+<body>
+<header class="bar"><div class="in">
+  <div><div class="wm">Baba Moustapha Amadou</div><div class="wmsub">Diagnostic de maturité IA</div></div>
+  <button class="theme-btn" id="themeBtn" aria-label="Thème clair ou sombre" title="Clair / sombre">◑</button>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="eyebrow">Diagnostic · score calculé, rédaction par un vrai Claude</span>
+    <h1>Où en êtes-vous avec l'IA ?</h1>
+    <p class="lead">Répondez à 18 affirmations sur 6 dimensions. Le score est calculé de façon transparente, puis un modèle Claude rédige votre diagnostic : niveau, forces, angles morts, feuille de route et cas d'usage. Environ deux minutes.</p>
+    <span class="fict">Démonstration · référentiel public, aucune donnée client</span>
+  </section>
+
+  <section id="questionnaire"></section>
+
+  <div class="run">
+    <button class="btn" id="run">Lancer le diagnostic</button>
+    <div class="runmsg" id="runmsg"></div>
+  </div>
+
+  <section id="result">
+    <div class="printhead"><div class="pt">Diagnostic de maturité IA</div><div class="ps">Rapport indicatif · référentiel public</div></div>
+    <div class="rhead">
+      <svg class="radar" id="radar" viewBox="0 0 220 220" role="img" aria-label="Radar de maturité"></svg>
+      <div class="level">
+        <span class="eyebrow">Niveau global</span>
+        <div class="lv" id="lv">—</div>
+        <div class="sc" id="sc"></div>
+        <p id="synthese"></p>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card forces"><h4>Points forts</h4><ul id="forces"></ul></div>
+      <div class="card gaps"><h4>Priorités</h4><ul id="gaps"></ul></div>
+    </div>
+    <div class="road"><h4>Feuille de route</h4><div id="road"></div></div>
+    <div><h4 style="font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:22px 0 2px">Cas d'usage recommandés</h4><div class="usecases" id="usecases"></div></div>
+    <div class="compliance" id="compliance"></div>
+    <div class="cta">
+      <button class="btn" id="dl">Télécharger le rapport (PDF)</button>
+      <button class="btn ghost" id="restart">Refaire le diagnostic</button>
+    </div>
+  </section>
+
+  <div class="note">
+    <b>Honnêteté.</b> Le score est calculé par une formule simple et transparente à partir de vos réponses. Un vrai modèle Claude (Sonnet) rédige ensuite le diagnostic, borné à un référentiel public, sans inventer de chiffre ni de benchmark. Résultat indicatif, pas un audit formel. Démonstration construite par Baba Moustapha Amadou, aucune donnée client.
+  </div>
+</main>
+
+<footer>
+  <div class="fm">Baba Moustapha Amadou</div>
+  <div class="fs">Scoring déterministe · Claude Sonnet · Déployé sur Vercel · Construit avec Claude Code</div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement,tb=document.getElementById('themeBtn');
+  try{var s=localStorage.getItem('bma-theme');if(s)root.setAttribute('data-theme',s);}catch(e){}
+  function cur(){var a=root.getAttribute('data-theme');return a?a:(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');}
+  tb.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('bma-theme',n);}catch(e){}});
+
+  // Les clés doivent correspondre à data/framework.js côté serveur.
+  var DIMS=[
+    {id:"strategie",label:"Stratégie et cas d'usage",q:[
+      "L'entreprise a identifié des cas d'usage IA prioritaires liés à ses objectifs.",
+      "Des moyens (budget, temps, sponsor) sont alloués à l'IA.",
+      "La direction porte le sujet, au-delà d'initiatives isolées."]},
+    {id:"donnees",label:"Données",q:[
+      "Les données utiles sont accessibles, centralisées et de qualité maîtrisée.",
+      "La gouvernance des données (droits, qualité, cycle de vie) est définie.",
+      "L'entreprise sait relier ses données à des cas d'usage concrets."]},
+    {id:"technologie",label:"Technologie et outils",q:[
+      "Les équipes disposent d'outils IA au-delà de tests ponctuels.",
+      "Les outils IA sont intégrés au système d'information.",
+      "Des solutions IA sont passées en production, pas seulement en POC."]},
+    {id:"competences",label:"Compétences et adoption",q:[
+      "Les collaborateurs sont formés aux usages de l'IA adaptés à leur métier.",
+      "L'IA est réellement utilisée au quotidien, pas seulement par quelques personnes.",
+      "L'entreprise sait accompagner le changement et lever les réticences."]},
+    {id:"gouvernance",label:"Gouvernance et conformité",q:[
+      "Les usages IA respectent le RGPD et un cadre interne clair.",
+      "L'entreprise connaît ses obligations liées à l'AI Act et les anticipe.",
+      "Les risques IA (biais, erreurs, sécurité) sont identifiés et suivis."]},
+    {id:"organisation",label:"Organisation et processus",q:[
+      "Les processus métier à fort potentiel IA sont cartographiés.",
+      "L'IA est intégrée dans les processus, pas juxtaposée à côté.",
+      "Les gains de l'IA sont mesurés (temps, qualité, coût)."]}
+  ];
+  var LABELS=["Pas du tout","","","","Tout à fait"];
+  var answers={};
+
+  function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+  var qc=document.getElementById('questionnaire');
+  DIMS.forEach(function(d,di){
+    var html='<div class="dim"><h3>'+esc(d.label)+'</h3><div class="dsub">Dimension '+(di+1)+' sur 6</div>';
+    d.q.forEach(function(qt,qi){
+      var key=d.id+'_'+qi;
+      var opts='';
+      for(var v=0;v<=4;v++){opts+='<button type="button" data-k="'+key+'" data-v="'+v+'" aria-pressed="false">'+v+'</button>';}
+      html+='<div class="q" data-k="'+key+'"><div class="qt">'+esc(qt)+'</div><div class="scale"><span class="lbl">'+LABELS[0]+'</span><span class="opts">'+opts+'</span><span class="lbl">'+LABELS[4]+'</span></div></div>';
+    });
+    html+='</div>';
+    qc.insertAdjacentHTML('beforeend',html);
+  });
+
+  qc.addEventListener('click',function(e){
+    var b=e.target.closest('button[data-k]');if(!b)return;
+    var k=b.getAttribute('data-k');
+    answers[k]=Number(b.getAttribute('data-v'));
+    b.parentNode.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed','false');});
+    b.setAttribute('aria-pressed','true');
+    var q=qc.querySelector('.q[data-k="'+k+'"]');if(q)q.classList.remove('miss');
+  });
+
+  function allAnswered(){
+    var miss=null;
+    DIMS.forEach(function(d){d.q.forEach(function(_,qi){
+      var k=d.id+'_'+qi;
+      if(typeof answers[k]==='undefined'){
+        var q=qc.querySelector('.q[data-k="'+k+'"]');if(q){q.classList.add('miss');if(!miss)miss=q;}
+      }
+    });});
+    return miss;
+  }
+
+  function radar(dims){
+    var cx=110,cy=110,R=80,n=dims.length,svg=document.getElementById('radar');
+    function pt(i,r){var a=-Math.PI/2+i*2*Math.PI/n;return [cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+    var g='';
+    [0.25,0.5,0.75,1].forEach(function(f){
+      var pts=[];for(var i=0;i<n;i++){pts.push(pt(i,R*f).map(function(x){return x.toFixed(1);}).join(','));}
+      g+='<polygon points="'+pts.join(' ')+'" fill="none" stroke="var(--line)" />';
+    });
+    for(var i=0;i<n;i++){var p=pt(i,R);g+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="var(--line)" />';}
+    var poly=[];for(var j=0;j<n;j++){poly.push(pt(j,R*(dims[j].score/4)).map(function(x){return x.toFixed(1);}).join(','));}
+    g+='<polygon points="'+poly.join(' ')+'" fill="var(--nav-s)" stroke="var(--nav)" stroke-width="2" />';
+    for(var m=0;m<n;m++){var lp=pt(m,R+16);var anchor=lp[0]<cx-5?'end':(lp[0]>cx+5?'start':'middle');g+='<text x="'+lp[0].toFixed(1)+'" y="'+lp[1].toFixed(1)+'" text-anchor="'+anchor+'" dominant-baseline="middle">'+esc(dims[m].label.split(' ')[0])+'</text>';}
+    svg.innerHTML=g;
+  }
+
+  function render(data){
+    document.getElementById('lv').textContent=data.niveau_global.label;
+    document.getElementById('sc').textContent=data.niveau_global.score+' / 4';
+    document.getElementById('synthese').textContent=data.diagnostic.synthese||'';
+    radar(data.dimensions);
+    function fill(id,arr){document.getElementById(id).innerHTML=(arr||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join('');}
+    fill('forces',data.diagnostic.forces);
+    fill('gaps',data.diagnostic.angles_morts);
+    document.getElementById('road').innerHTML=(data.diagnostic.feuille_de_route||[]).map(function(s){
+      return '<div class="step"><div class="num">'+esc(String(s.priorite||''))+'</div><div><div class="ac">'+esc(s.action||'')+'</div><div class="wh">'+esc(s.pourquoi||'')+'</div><div class="hz">'+esc(s.horizon||'')+'</div></div></div>';
+    }).join('');
+    document.getElementById('usecases').innerHTML=(data.diagnostic.cas_usage||[]).map(function(u){
+      return '<div class="uc"><div class="t">'+esc(u.titre||'')+'</div><div class="g">'+esc(u.gain_vise||'')+'</div></div>';
+    }).join('');
+    document.getElementById('compliance').innerHTML='<b>Conformité.</b> '+esc(data.diagnostic.conformite||'');
+    document.getElementById('result').style.display='block';
+    document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  var runBtn=document.getElementById('run'),runmsg=document.getElementById('runmsg');
+  runBtn.addEventListener('click',function(){
+    runmsg.className='runmsg';runmsg.textContent='';
+    var miss=allAnswered();
+    if(miss){runmsg.className='runmsg err';runmsg.textContent='Merci de répondre à toutes les affirmations.';miss.scrollIntoView({behavior:'smooth',block:'center'});return;}
+    runBtn.disabled=true;runmsg.textContent='Calcul du score et rédaction du diagnostic…';
+    fetch('/api/diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({answers:answers})})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+      .then(function(res){
+        runBtn.disabled=false;
+        if(!res.ok||res.j.error){runmsg.className='runmsg err';runmsg.textContent=res.j.error||'Service indisponible.';return;}
+        runmsg.textContent='';render(res.j);
+      })
+      .catch(function(){runBtn.disabled=false;runmsg.className='runmsg err';runmsg.textContent='Connexion impossible. Réessayez.';});
+  });
+
+  document.getElementById('dl').addEventListener('click',function(){window.print();});
+  document.getElementById('restart').addEventListener('click',function(){document.getElementById('result').style.display='none';window.scrollTo({top:0,behavior:'smooth'});});
+})();
+</script>
+</body>
+</html>

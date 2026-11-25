@@ -1,0 +1,10 @@
+{
+  "name": "diagnostic-maturite-ia",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Diagnostic de maturite IA : scoring deterministe en code, diagnostic redige par Claude Sonnet, deploye sur Vercel.",
+  "engines": {
+    "node": ">=18"
+  }
+}
