@@ -21,7 +21,11 @@ export default async function handler(req, res) {
 
   const token = process.env.AIRTABLE_TOKEN, base = process.env.AIRTABLE_BASE_ID;
   const table = process.env.AIRTABLE_TABLE || "Leads";
-  if (!token || !base) { res.status(503).json({ error: "La collecte n'est pas configurée." }); return; }
+  if (!token || !base) {
+    const missing = [!token && "AIRTABLE_TOKEN", !base && "AIRTABLE_BASE_ID"].filter(Boolean).join(" et ");
+    res.status(503).json({ error: "Collecte non configurée : variable " + missing + " absente ou vide côté serveur." });
+    return;
+  }
 
   const ip = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim() || "anon";
   if (rateLimited(ip)) { res.status(429).json({ error: "Trop d'envois. Réessayez dans une minute." }); return; }
