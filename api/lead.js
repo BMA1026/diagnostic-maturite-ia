@@ -55,7 +55,7 @@ export default async function handler(req, res) {
     if (!r.ok) {
       const t = await r.text();
       console.error("Airtable error", r.status, t.slice(0, 300));
-      res.status(502).json({ error: "Enregistrement impossible pour le moment." });
+      res.status(502).json({ error: "Enregistrement impossible pour le moment.", detail: { status: r.status, body: t.slice(0, 220) } });
       return;
     }
     res.status(200).json({ ok: true });
